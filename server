@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+
+<?php
+
+array_shift($argv);
+
+if (empty($argv)) {
+   $port = 80;
+} else {
+   $port = array_shift($argv);
+}
+
+require('src/Server.php');
+require('src/Router.php');
+
+$router = new Router();
+
+///Exemplo de router
+
+$router->add('GET', '/', function (Request $request) {
+   return new Response("Hello, world");
+});
+
+$router->add('POST', '/', function (Request $request) {
+   return new Response("Hello, Post");
+});
+
+$redis = new Redis();
+$redis->connect('127.0.0.1', 6379);
+
+$server = new Server('127.0.0.1', $port, $router, $redis);
+
+
+$server->listen();
+?>
